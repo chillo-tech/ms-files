@@ -15,6 +15,7 @@ services:
       - spring.rabbitmq.port=RABBITMQ_PORT
       - spring.rabbitmq.password=RABBITMQ_PASSWORD
       - spring.rabbitmq.username=APPLICATIONS_USERNAME
+      - application.files.base-path=FILES_ROOT_FOLDER
 networks:
   applications-network:
     external:
