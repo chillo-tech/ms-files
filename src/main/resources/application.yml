@@ -1,0 +1,6 @@
+spring:
+  rabbitmq:
+    host: 212.83.180.65
+    port: 5672
+    username: rbmq_admin
+    password: administrator
