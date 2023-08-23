@@ -5,6 +5,7 @@ spring:
     serialization:
         write-dates-as-timestamps: false
   rabbitmq:
+    port: 5672
     virtual-host: prod-notifications
     template:
       queue: tech.files.queue
