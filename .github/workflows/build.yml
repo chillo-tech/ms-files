@@ -7,7 +7,7 @@ on:
 
 env:
   NODE_VERSION: '14.x'
-  APPLICATION_NAME: 'zeeven'
+  APPLICATION_NAME: 'files'
   APPLICATION_TYPE: 'ms'
 
 permissions:
