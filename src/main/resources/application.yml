@@ -14,7 +14,3 @@ spring:
             size: 10
   application:
     name: ms-files
-
-application:
-    files:
-        base-path: "/var/www/files"
