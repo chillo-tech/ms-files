@@ -9,7 +9,7 @@ services:
     networks:
       - applications-network
     volumes:
-        FILES_ROOT_FOLDER:FILES_ROOT_FOLDER
+      - FILES_ROOT_FOLDER:FILES_ROOT_FOLDER
     environment:
       - spring.rabbitmq.host=RABBITMQ_IP
       - spring.rabbitmq.port=RABBITMQ_PORT
