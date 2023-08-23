@@ -10,10 +10,10 @@ import java.util.Base64;
 import java.util.Map;
 
 @Component
-public class RabbitmqFilesHandler {
+public class FilesHandler {
     final String basePath;
 
-    public RabbitmqFilesHandler(@Value("${application.files.base-path}") final String basePath) {
+    public FilesHandler(@Value("${application.files.base-path}") final String basePath) {
         this.basePath = basePath;
     }
 
