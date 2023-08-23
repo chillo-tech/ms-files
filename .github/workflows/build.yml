@@ -81,20 +81,22 @@ jobs:
           java-version: '17'
           distribution: 'adopt'
       - name: Build with Maven
-        run: mvn -Dmaven.test.skip=true clean compile package
+        run: |
+            mvn -Dmaven.test.skip=true clean compile package
+            mv target/*.jar ${{env.APPLICATION_TYPE}}-${{env.APPLICATION_NAME}}.jar
 
       - name: Extract metadata (tags, labels) for Docker
         id: meta
         uses: docker/metadata-action@v3
         with:
-          images: simachille/ms-zeeven
+          images: simachille/${{env.APPLICATION_TYPE}}-${{env.APPLICATION_NAME}}
 
       - name: Build and push Docker image
         uses: docker/build-push-action@v3
         with:
           context: .
           push: true
-          tags: simachille/ms-zeeven:${{ github.sha }}
+          tags: simachille/${{env.APPLICATION_TYPE}}-${{env.APPLICATION_NAME}}:${{ github.sha }}
           labels: ${{ steps.meta.outputs.labels }}
 
   run-container:
@@ -112,7 +114,7 @@ jobs:
         script: |
           docker compose -f /opt/applications/${{env.APPLICATION_NAME}}/${{env.APPLICATION_TYPE}}-${{env.APPLICATION_NAME}}/docker-compose.yml rm -f
           docker compose -f /opt/applications/${{env.APPLICATION_NAME}}/${{env.APPLICATION_TYPE}}-${{env.APPLICATION_NAME}}/docker-compose.yml stop
-          docker rmi -f simachille/ms-zeeven:${{ github.sha }}
+          docker rmi -f simachille/${{env.APPLICATION_TYPE}}-${{env.APPLICATION_NAME}}:${{ github.sha }}
           rm -f /opt/applications/${{env.APPLICATION_NAME}}/${{env.APPLICATION_TYPE}}-${{env.APPLICATION_NAME}}/.env
           echo RABBITMQ_IP=${{ secrets.RABBITMQ_IP }} >> /opt/applications/${{env.APPLICATION_NAME}}/${{env.APPLICATION_TYPE}}-${{env.APPLICATION_NAME}}/.env
           echo RABBITMQ_PORT=${{ secrets.RABBITMQ_PORT }} >> /opt/applications/${{env.APPLICATION_NAME}}/${{env.APPLICATION_TYPE}}-${{env.APPLICATION_NAME}}/.env
