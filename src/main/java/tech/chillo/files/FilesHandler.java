@@ -29,14 +29,13 @@ public class FilesHandler {
     public void handleMessage(final Map<String, Object> params) throws IOException {
         final String filePath = String.valueOf(params.get("path"));
         if (filePath != null && !filePath.equals("null") && Strings.isNotEmpty(filePath)) {
-
             final String folder = filePath.substring(0, filePath.lastIndexOf("/"));
             Files.createDirectories(Paths.get(folder));
             final String fullPath = String.format("%s/%s", this.basePath, filePath);
 
             final String fileAsString = String.valueOf(params.get("file"));
             final byte[] decodedFile = Base64.getDecoder().decode(fileAsString);
-,
+
             try (final OutputStream stream = new FileOutputStream(fullPath)) {
                 stream.write(decodedFile);
             }
