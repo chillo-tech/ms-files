@@ -81,9 +81,7 @@ jobs:
           java-version: '17'
           distribution: 'adopt'
       - name: Build with Maven
-        run: |
-            mvn -Dmaven.test.skip=true clean compile package
-            mv target/*.jar ${{env.APPLICATION_TYPE}}-${{env.APPLICATION_NAME}}.jar
+        run: mvn -Dmaven.test.skip=true clean compile package
 
       - name: Extract metadata (tags, labels) for Docker
         id: meta
