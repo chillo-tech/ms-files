@@ -31,23 +31,18 @@ public class FilesHandler {
     )
     public void handleMessage(final Map<String, Object> params) throws IOException {
         final String filePath = String.valueOf(params.get("path"));
-        log.info("filePath {}", filePath);
         if (filePath != null && !filePath.equals("null") && Strings.isNotEmpty(filePath)) {
             final String fullPath = String.format("%s/%s", this.basePath, filePath);
             final Path folder = Paths.get(fullPath).getParent();
-            log.info("folder {}", folder);
             Files.createDirectories(folder);
-            log.info("folder is created {}", Files.exists(folder));
 
             final String fileAsString = String.valueOf(params.get("file"));
             final byte[] decodedFile = Base64.getDecoder().decode(fileAsString);
             final File fullPathAsFile = new File(fullPath);
             if (Files.exists(Paths.get(fullPath))) {
-                log.info("Suppression du fichier {}", fullPath);
                 FileUtils.delete(fullPathAsFile);
             }
             FileUtils.writeByteArrayToFile(fullPathAsFile, decodedFile);
         }
-
     }
 }
