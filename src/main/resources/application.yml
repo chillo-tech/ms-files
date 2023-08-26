@@ -5,10 +5,6 @@ spring:
     serialization:
         write-dates-as-timestamps: false
   rabbitmq:
-    host: 212.83.180.65
-    port: 5672
-    username: rbmq_admin
-    password: administrator
     virtual-host: prod-notifications
     template:
       queue: tech.files.queue
@@ -18,7 +14,3 @@ spring:
             size: 10
   application:
     name: ms-files
-
-application:
-    files:
-        base-path: "/var/www/files"

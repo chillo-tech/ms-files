@@ -7,8 +7,9 @@ on:
 
 env:
   NODE_VERSION: '14.x'
-  APPLICATION_NAME: 'zeeven'
+  APPLICATION_NAME: 'files'
   APPLICATION_TYPE: 'ms'
+  FILES_ROOT_FOLDER: '/var/www/files'
 
 permissions:
   contents: read
@@ -38,7 +39,7 @@ jobs:
       - name: update configs
         run: |
           sed -i 's|IMAGE_NAME|simachille/${{env.APPLICATION_TYPE}}-${{env.APPLICATION_NAME}}:${{ github.sha }}|' docker-compose.yml
-          sed -i 's/WHATAPPS_TOKEN/${{ secrets.WHATSAPP_TOKEN }}/g' docker-compose.yml
+          sed -i 's|FILES_ROOT_FOLDER|${{ env.FILES_ROOT_FOLDER }}|g' docker-compose.yml
 
       - name: copy file via ssh password
         uses: appleboy/scp-action@master
@@ -87,14 +88,14 @@ jobs:
         id: meta
         uses: docker/metadata-action@v3
         with:
-          images: simachille/ms-zeeven
+          images: simachille/${{env.APPLICATION_TYPE}}-${{env.APPLICATION_NAME}}
 
       - name: Build and push Docker image
         uses: docker/build-push-action@v3
         with:
           context: .
           push: true
-          tags: simachille/ms-zeeven:${{ github.sha }}
+          tags: simachille/${{env.APPLICATION_TYPE}}-${{env.APPLICATION_NAME}}:${{ github.sha }}
           labels: ${{ steps.meta.outputs.labels }}
 
   run-container:
@@ -112,16 +113,15 @@ jobs:
         script: |
           docker compose -f /opt/applications/${{env.APPLICATION_NAME}}/${{env.APPLICATION_TYPE}}-${{env.APPLICATION_NAME}}/docker-compose.yml rm -f
           docker compose -f /opt/applications/${{env.APPLICATION_NAME}}/${{env.APPLICATION_TYPE}}-${{env.APPLICATION_NAME}}/docker-compose.yml stop
-          docker rmi -f simachille/ms-zeeven:${{ github.sha }}
+          docker rmi -f simachille/${{env.APPLICATION_TYPE}}-${{env.APPLICATION_NAME}}:${{ github.sha }}
+
           rm -f /opt/applications/${{env.APPLICATION_NAME}}/${{env.APPLICATION_TYPE}}-${{env.APPLICATION_NAME}}/.env
-          echo WHATSAPP_TOKEN=${{ secrets.WHATSAPP_TOKEN }} >> /opt/applications/${{env.APPLICATION_NAME}}/${{env.APPLICATION_TYPE}}-${{env.APPLICATION_NAME}}/.env
-          echo NOTIFICATIONS_HOST=${{ secrets.NOTIFICATIONS_HOST }} >> /opt/applications/${{env.APPLICATION_NAME}}/${{env.APPLICATION_TYPE}}-${{env.APPLICATION_NAME}}/.env
-          echo ZEEVEN_HOST=${{ secrets.ZEEVEN_HOST }} >> /opt/applications/${{env.APPLICATION_NAME}}/${{env.APPLICATION_TYPE}}-${{env.APPLICATION_NAME}}/.env
-          echo STRIPE_PUBLIC_KEY=${{ secrets.STRIPE_PUBLIC_KEY }} >> /opt/applications/${{env.APPLICATION_NAME}}/${{env.APPLICATION_TYPE}}-${{env.APPLICATION_NAME}}/.env
-          echo STRIPE_SECRET_KEY=${{ secrets.STRIPE_SECRET_KEY }} >> /opt/applications/${{env.APPLICATION_NAME}}/${{env.APPLICATION_TYPE}}-${{env.APPLICATION_NAME}}/.env
-          echo STRIPE_WEBHOOKSECRET_KEY=${{ secrets.STRIPE_WEBHOOKSECRET_KEY }} >> /opt/applications/${{env.APPLICATION_NAME}}/${{env.APPLICATION_TYPE}}-${{env.APPLICATION_NAME}}/.env
-          echo IPLOCATION_API_KEY=${{ secrets.PROD_IPLOCATION_API_KEY }} >> /opt/applications/${{env.APPLICATION_NAME}}/${{env.APPLICATION_TYPE}}-${{env.APPLICATION_NAME}}/.env
-          echo BACKOFFICE_API_KEY=${{ secrets.PROD_BACKOFFICE_API_KEY }} >> /opt/applications/${{env.APPLICATION_NAME}}/${{env.APPLICATION_TYPE}}-${{env.APPLICATION_NAME}}/.env
+          echo RABBITMQ_IP=${{ secrets.RABBITMQ_IP }} >> /opt/applications/${{env.APPLICATION_NAME}}/${{env.APPLICATION_TYPE}}-${{env.APPLICATION_NAME}}/.env
+          echo RABBITMQ_PORT=${{ secrets.RABBITMQ_PORT }} >> /opt/applications/${{env.APPLICATION_NAME}}/${{env.APPLICATION_TYPE}}-${{env.APPLICATION_NAME}}/.env
+          echo RABBITMQ_USERNAME=${{ secrets.RABBITMQ_USERNAME }} >> /opt/applications/${{env.APPLICATION_NAME}}/${{env.APPLICATION_TYPE}}-${{env.APPLICATION_NAME}}/.env
+          echo RABBITMQ_PASSWORD=${{ secrets.RABBITMQ_PASSWORD }} >> /opt/applications/${{env.APPLICATION_NAME}}/${{env.APPLICATION_TYPE}}-${{env.APPLICATION_NAME}}/.env
+          echo FILES_ROOT_FOLDER=${{ env.FILES_ROOT_FOLDER }} >> /opt/applications/${{env.APPLICATION_NAME}}/${{env.APPLICATION_TYPE}}-${{env.APPLICATION_NAME}}/.env
+
           docker compose -f /opt/applications/${{env.APPLICATION_NAME}}/${{env.APPLICATION_TYPE}}-${{env.APPLICATION_NAME}}/docker-compose.yml pull
           docker compose -f /opt/applications/${{env.APPLICATION_NAME}}/${{env.APPLICATION_TYPE}}-${{env.APPLICATION_NAME}}/docker-compose.yml up -d
           rm -f /opt/applications/${{env.APPLICATION_NAME}}/${{env.APPLICATION_TYPE}}-${{env.APPLICATION_NAME}}/.env
