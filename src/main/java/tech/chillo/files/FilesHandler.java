@@ -1,14 +1,14 @@
 package tech.chillo.files;
 
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.util.Strings;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import java.io.FileOutputStream;
+import java.io.File;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -41,10 +41,12 @@ public class FilesHandler {
 
             final String fileAsString = String.valueOf(params.get("file"));
             final byte[] decodedFile = Base64.getDecoder().decode(fileAsString);
-
-            try (final OutputStream stream = new FileOutputStream(fullPath)) {
-                stream.write(decodedFile);
+            final File fullPathAsFile = new File(fullPath);
+            if (Files.exists(Paths.get(fullPath))) {
+                log.info("Suppression du fichier {}", fullPath);
+                FileUtils.delete(fullPathAsFile);
             }
+            FileUtils.writeByteArrayToFile(fullPathAsFile, decodedFile);
         }
 
     }
