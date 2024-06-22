@@ -1,16 +1,12 @@
 server:
-  port : 9093
+  port: 9093
 spring:
   jackson:
     serialization:
-        write-dates-as-timestamps: false
-  rabbitmq:
-    virtual-host: prod-notifications
-    template:
-      queue: tech.files.queue
+      write-dates-as-timestamps: false
   task:
     scheduling:
-        pool:
-            size: 10
+      pool:
+        size: 10
   application:
     name: ms-files

@@ -3,9 +3,12 @@ package tech.chillo.files;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.util.Strings;
-import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
+import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.io.File;
 import java.io.IOException;
@@ -16,7 +19,8 @@ import java.util.Base64;
 import java.util.Map;
 
 @Slf4j
-@Component
+@RestController
+@RequestMapping(path = "/v1/files")
 public class FilesHandler {
     final String basePath;
 
@@ -24,12 +28,8 @@ public class FilesHandler {
         this.basePath = basePath;
     }
 
-    @RabbitListener(
-            queues = {"${spring.rabbitmq.template.queue}"},
-            returnExceptions = "rabbitErrorHandler",
-            errorHandler = "rabbitErrorHandler"
-    )
-    public void handleMessage(final Map<String, Object> params) throws IOException {
+    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
+    public void handleMessage(@RequestBody final Map<String, Object> params) throws IOException {
         final String filePath = String.valueOf(params.get("path"));
         if (filePath != null && !filePath.equals("null") && Strings.isNotEmpty(filePath)) {
             final String fullPath = String.format("%s/%s", this.basePath, filePath);

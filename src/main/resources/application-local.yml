@@ -1,14 +1,3 @@
-spring:
-  rabbitmq:
-    virtual-host: /
-    template:
-      queue: tech.files.queuelocal
-    host: 212.83.180.65
-    port: 5672
-    username: rbmq_admin
-    password: administrator
-
-
 application:
-    files:
-        base-path: "/Users/chillo/projets/zeeven/data/tickets"
+  files:
+    base-path: "/Users/chillo/projets/zeeven/data/tickets"
