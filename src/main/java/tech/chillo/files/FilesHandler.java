@@ -31,8 +31,10 @@ public class FilesHandler {
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     public void handleMessage(@RequestBody final Map<String, Object> params) throws IOException {
         final String filePath = String.valueOf(params.get("path"));
+        log.info("File path {}", filePath);
         if (filePath != null && !filePath.equals("null") && Strings.isNotEmpty(filePath)) {
             final String fullPath = String.format("%s/%s", this.basePath, filePath);
+            log.info("Full file path {}", fullPath);
             final Path folder = Paths.get(fullPath).getParent();
             Files.createDirectories(folder);
 
@@ -42,6 +44,8 @@ public class FilesHandler {
             if (Files.exists(Paths.get(fullPath))) {
                 FileUtils.delete(fullPathAsFile);
             }
+            
+            log.info("Write  file path {}", fullPath);
             FileUtils.writeByteArrayToFile(fullPathAsFile, decodedFile);
         }
     }
