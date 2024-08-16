@@ -1,6 +1,9 @@
 server:
   port: 9093
 spring:
+  data:
+    mongodb:
+      database: ${spring.application.name}
   jackson:
     serialization:
       write-dates-as-timestamps: false

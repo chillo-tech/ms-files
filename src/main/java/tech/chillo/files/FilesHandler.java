@@ -16,21 +16,21 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Base64;
-import java.util.Map;
 
 @Slf4j
 @RestController
 @RequestMapping(path = "/v1/files")
 public class FilesHandler {
     final String basePath;
-
-    public FilesHandler(@Value("${application.files.base-path}") final String basePath) {
+    final FilesRepository filesRepository;
+    public FilesHandler(@Value("${application.files.base-path}") final String basePath, FilesRepository filesRepository) {
         this.basePath = basePath;
+        this.filesRepository = filesRepository;
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
-    public void handleMessage(@RequestBody final Map<String, Object> params) throws IOException {
-        final String filePath = String.valueOf(params.get("path"));
+    public void handleMessage(@RequestBody final FileParams params) throws IOException {
+        final String filePath = String.valueOf(params.getClass());
         log.info("File path {}", filePath);
         if (filePath != null && !filePath.equals("null") && Strings.isNotEmpty(filePath)) {
             final String fullPath = String.format("%s/%s", this.basePath, filePath);
@@ -38,7 +38,7 @@ public class FilesHandler {
             final Path folder = Paths.get(fullPath).getParent();
             Files.createDirectories(folder);
 
-            final String fileAsString = String.valueOf(params.get("file"));
+            final String fileAsString = String.valueOf(params.getFile());
             final byte[] decodedFile = Base64.getDecoder().decode(fileAsString);
             final File fullPathAsFile = new File(fullPath);
             if (Files.exists(Paths.get(fullPath))) {
@@ -47,6 +47,7 @@ public class FilesHandler {
             
             log.info("Write  file path {}", fullPath);
             FileUtils.writeByteArrayToFile(fullPathAsFile, decodedFile);
+            this.filesRepository.save(params);
         }
     }
 }
