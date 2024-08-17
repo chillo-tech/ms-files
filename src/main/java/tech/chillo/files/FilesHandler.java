@@ -37,7 +37,7 @@ public class FilesHandler {
             log.info("Full file path {}", fullPath);
             final Path folder = Paths.get(fullPath).getParent();
             Files.createDirectories(folder);
-            final String fileAsString = String.valueOf(params.getFile());
+            String fileAsString = String.valueOf(params.getFile());
                 if (fileAsString.contains(",")) {
                     fileAsString = fileAsString.split(",")[1]
             }
