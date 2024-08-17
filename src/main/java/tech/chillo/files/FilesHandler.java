@@ -37,8 +37,10 @@ public class FilesHandler {
             log.info("Full file path {}", fullPath);
             final Path folder = Paths.get(fullPath).getParent();
             Files.createDirectories(folder);
-
             final String fileAsString = String.valueOf(params.getFile());
+                if (fileAsString.contains(",")) {
+                    fileAsString = fileAsString.split(",")[1]
+            }
             final byte[] decodedFile = Base64.getDecoder().decode(fileAsString);
             final File fullPathAsFile = new File(fullPath);
             if (Files.exists(Paths.get(fullPath))) {
