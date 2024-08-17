@@ -39,7 +39,7 @@ public class FilesHandler {
             Files.createDirectories(folder);
             String fileAsString = String.valueOf(params.getFile());
                 if (fileAsString.contains(",")) {
-                    fileAsString = fileAsString.split(",")[1]
+                    fileAsString = fileAsString.split(",")[1];
             }
             final byte[] decodedFile = Base64.getDecoder().decode(fileAsString);
             final File fullPathAsFile = new File(fullPath);
