@@ -30,7 +30,7 @@ public class FilesHandler {
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     public void handleMessage(@RequestBody final FileParams params) throws IOException {
-        final String filePath = String.valueOf(params.getClass());
+        final String filePath = String.valueOf(params.getPath());
         log.info("File path {}", filePath);
         if (filePath != null && !filePath.equals("null") && Strings.isNotEmpty(filePath)) {
             final String fullPath = String.format("%s/%s", this.basePath, filePath);
